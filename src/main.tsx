@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router";
 import { ThemeProvider } from "./components/theme-provider.tsx";
+import { Toaster } from "./components/ui/sonner.tsx";
 
 import RootLayout from "./pages/layout.tsx"; // 전역 레이아웃 컴포넌트
 import App from "./pages"; // 메인 페이지
@@ -23,6 +24,7 @@ createRoot(document.getElementById("root")!).render(
                     </Route>
                 </Routes>
             </BrowserRouter>
+            <Toaster richColors position="top-center" />
         </ThemeProvider>
     </StrictMode>
 );
