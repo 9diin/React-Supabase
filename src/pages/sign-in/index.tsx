@@ -31,7 +31,7 @@ export default function SignIn() {
         <main className="w-full h-full min-h-[720px] flex items-center justify-center p-6 gap-6">
             <div className="w-100 max-w-100 flex flex-col px-6 gap-6">
                 <div className="flex flex-col">
-                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">로그인</h4>
+                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">회원가입</h4>
                     <p className="text-muted-foreground">로그인을 위한 정보를 입력해주세요.</p>
                 </div>
                 <div className="grid gap-3">
@@ -84,7 +84,7 @@ export default function SignIn() {
                                 </Button>
                                 <div className="text-center">
                                     계정이 없으신가요?
-                                    <NavLink to={"sign-up"} className="underline ml-1">
+                                    <NavLink to={"/sign-up"} className="underline ml-1">
                                         회원가입
                                     </NavLink>
                                 </div>
