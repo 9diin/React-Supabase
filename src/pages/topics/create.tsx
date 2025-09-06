@@ -1,3 +1,4 @@
+import { AppEditor } from "@/components/common";
 import { Button, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue, Skeleton } from "@/components/ui";
 import { TOPIC_CATEGORY } from "@/constants/category.constant";
 import { ArrowLeft, Asterisk, BookOpenCheck, ImageOff, Save } from "lucide-react";
@@ -36,7 +37,8 @@ export default function CreateTopic() {
                         <Asterisk size={14} className="text-[#F96859]" />
                         <Label className="text-muted-foreground">본문</Label>
                     </div>
-                    <Skeleton className="w-full h-100" />
+                    {/* BlockNote Text Editor UI */}
+                    <AppEditor />
                 </div>
             </section>
             {/* 카테고리 및 썸네일 등록 */}

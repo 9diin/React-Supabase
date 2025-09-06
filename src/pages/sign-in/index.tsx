@@ -27,10 +27,7 @@ export default function SignIn() {
             password: "",
         },
     });
-    const setId = useAuthStore((state) => state.setId);
-    const setEmail = useAuthStore((state) => state.setEmail);
-    const setRole = useAuthStore((state) => state.setRole);
-
+    const setUser = useAuthStore((state) => state.setUser);
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         console.log("로그인 버튼 클릭!");
 
@@ -52,9 +49,11 @@ export default function SignIn() {
                 // data는 2개의 객체 데이터를 전달한다.
                 // 1. session
                 // 2. user
-                setId(user.id);
-                setEmail(user.email as string);
-                setRole(user.role as string);
+                setUser({
+                    id: user.id,
+                    email: user.email as string,
+                    role: user.role as string,
+                });
 
                 toast.success("로그인을 성공하였습니다.");
                 navigate("/");

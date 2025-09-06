@@ -5,7 +5,7 @@ import { Separator } from "../ui/separator";
 function AppHeader() {
     const navigate = useNavigate();
 
-    const email = useAuthStore((state) => state.email);
+    const user = useAuthStore((state) => state.user);
     const reset = useAuthStore((state) => state.reset);
 
     return (
@@ -21,9 +21,9 @@ function AppHeader() {
                     </div>
                 </div>
 
-                {email ? (
+                {user.email ? (
                     <div className="flex items-center gap-5">
-                        <span>{email}</span>
+                        <span>{user.email}</span>
                         <Separator orientation="vertical" className="!h-4" />
                         <span onClick={reset}>로그아웃</span>
                     </div>
