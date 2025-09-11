@@ -1,13 +1,14 @@
 import { useState } from "react";
+import { useParams } from "react-router";
 import { useAuthStore } from "@/stores";
+import { nanoid } from "nanoid";
+import supabase from "@/lib/supabase";
 
 import { AppEditor, AppFileUpload } from "@/components/common";
 import { Button, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue, Skeleton } from "@/components/ui";
 import { TOPIC_CATEGORY } from "@/constants/category.constant";
 import { ArrowLeft, Asterisk, BookOpenCheck, ImageOff, Save } from "lucide-react";
 import { toast } from "sonner";
-import supabase from "@/lib/supabase";
-import { useParams } from "react-router";
 import type { Block } from "@blocknote/core";
 
 export default function CreateTopic() {
@@ -25,14 +26,41 @@ export default function CreateTopic() {
             return;
         }
 
-        console.log("title: ", title);
-        console.log("content: ", content);
-        console.log("category: ", category);
+        // 1. 파일 업로드 시, Supabase의 Storage 즉, bucket 폴더에 이미지를 먼저 업로드 한 후
+        // 이미지가 저장된 bucket 폴더의 경로 URL 주소를 우리가 관리하고 있는 Topic 테이블 thumbnail 컬럼에 문자열 형태
+        // 즉, string 타입 (DB에서는 Text 타입)으로 저장한다.
         console.log("thumbnail: ", thumbnail);
+
+        let thumbnailUrl: string | null = null;
+
+        if (thumbnail && thumbnail instanceof File) {
+            // 썸네일 이미지를 storage에 업로드
+            const fileExt = thumbnail.name.split(".").pop();
+            const fileName = `${nanoid()}.${fileExt}`;
+            const filePath = `topics/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage.from("files").upload(filePath, thumbnail);
+
+            if (uploadError) throw uploadError;
+
+            // 업로드된 이미지의 Public URL 값 가져오기
+            const { data } = supabase.storage.from("files").getPublicUrl(filePath);
+
+            if (!data) throw new Error("썸네일 Public URL 조회를 실패하였습니다.");
+            thumbnailUrl = data.publicUrl;
+        }
 
         const { data, error } = await supabase
             .from("topic")
-            .update([{ title, content, category, thumbnail, author: user.id }])
+            .update([
+                {
+                    title,
+                    content: JSON.stringify(content),
+                    category,
+                    thumbnail: thumbnailUrl,
+                    author: user.id,
+                },
+            ])
             .eq("id", id)
             .select();
 
