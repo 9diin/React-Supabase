@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useAuthStore } from "@/stores";
 import { nanoid } from "nanoid";
@@ -19,6 +19,32 @@ export default function CreateTopic() {
     const [content, setContent] = useState<Block[]>([]);
     const [category, setCategory] = useState<string>("");
     const [thumbnail, setThumbnail] = useState<File | string | null>(null);
+
+    useEffect(() => {
+        fetchTopic();
+    }, []);
+
+    const fetchTopic = async () => {
+        try {
+            const { data: topic, error } = await supabase.from("topic").select("*").eq("id", id);
+
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+            console.log(topic[0].content);
+
+            if (topic) {
+                setTitle(topic[0].title);
+                setContent(JSON.parse(topic[0].content));
+                setCategory(topic[0].category);
+                setThumbnail(topic[0].thumbnail);
+            }
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    };
 
     const handleSave = async () => {
         if (!title && !content && !category && !thumbnail) {
@@ -116,7 +142,7 @@ export default function CreateTopic() {
                         <Label className="text-muted-foreground">본문</Label>
                     </div>
                     {/* BlockNote Text Editor UI */}
-                    <AppEditor setContent={setContent} />
+                    <AppEditor props={content} setContent={setContent} />
                 </div>
             </section>
             {/* 카테고리 및 썸네일 등록 */}
@@ -130,7 +156,7 @@ export default function CreateTopic() {
                         <Asterisk size={14} className="text-[#F96859]" />
                         <Label className="text-muted-foreground">카테고리</Label>
                     </div>
-                    <Select onValueChange={(value) => setCategory(value)}>
+                    <Select value={category} onValueChange={(value) => setCategory(value)}>
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="토픽(주제) 선택" />
                         </SelectTrigger>

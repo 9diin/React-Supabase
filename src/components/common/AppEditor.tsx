@@ -7,15 +7,41 @@ import "@blocknote/mantine/style.css";
 // Include the included Inter font
 import "@blocknote/core/fonts/inter.css";
 import type { Block } from "@blocknote/core";
+import { nanoid } from "nanoid";
+import { useEffect } from "react";
 
 interface Props {
+    props?: Block[];
     setContent: (content: Block[]) => void;
 }
 
-export function AppEditor({ setContent }: Props) {
+export function AppEditor({ props, setContent }: Props) {
     const locale = ko;
     // Create a new editor instance
     const editor = useCreateBlockNote({
+        initialContent:
+            props && props.length > 0
+                ? props
+                : [
+                      {
+                          id: nanoid(),
+                          type: "paragraph",
+                          props: {
+                              textAlignment: "left",
+                              textColor: "default",
+                              backgroundColor: "default",
+                          },
+                          content: [
+                              {
+                                  type: "text",
+                                  text: "",
+                                  styles: {},
+                              },
+                          ],
+                          children: [],
+                      },
+                  ], // props가 존재할 경우 초기 콘텐츠로 설정
+
         dictionary: {
             ...locale,
             placeholders: {
@@ -24,6 +50,18 @@ export function AppEditor({ setContent }: Props) {
             },
         },
     });
+
+    useEffect(() => {
+        if (props && props.length > 0) {
+            const current = JSON.stringify(editor.document);
+            const next = JSON.stringify(props);
+
+            // 같으면 교체 안 함 (무한 루프 방지)
+            if (current !== next) {
+                editor.replaceBlocks(editor.document, props);
+            }
+        }
+    }, [props, editor]);
 
     // Render the editor
     return <BlockNoteView editor={editor} onChange={() => setContent(editor.document)} />;
