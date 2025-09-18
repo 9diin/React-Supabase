@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 import supabase from "@/lib/supabase";
 
 import { AppEditor, AppFileUpload } from "@/components/common";
-import { Button, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue, Skeleton } from "@/components/ui";
+import { Button, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui";
 import { TOPIC_CATEGORY } from "@/constants/category.constant";
 import { ArrowLeft, Asterisk, BookOpenCheck, ImageOff, Save } from "lucide-react";
 import { toast } from "sonner";
@@ -74,6 +74,7 @@ export default function CreateTopic() {
             return;
         }
     };
+
     const handlePublish = async () => {
         if (!title || !content || !category || !thumbnail) {
             toast.warning("제목, 본문, 카테고리, 썸네일은 필수값입니다.");

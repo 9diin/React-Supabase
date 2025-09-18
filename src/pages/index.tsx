@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router";
 import { useAuthStore } from "@/stores";
-import { AppSidebar } from "../components/common";
+import { AppDraftsDialog, AppSidebar } from "../components/common";
 import { SkeletonHotTopic, SkeletonNewTopic } from "../components/skeleton";
 import { Button } from "../components/ui";
-import { PencilLine } from "lucide-react";
+import { CircleSmall, NotebookPen, PencilLine } from "lucide-react";
 import { toast } from "sonner";
 import supabase from "@/lib/supabase";
 
@@ -23,7 +23,7 @@ function App() {
             .from("topic")
             .insert([
                 {
-                    status: "temp",
+                    status: null,
                     title: null,
                     content: null,
                     category: null,
@@ -46,11 +46,19 @@ function App() {
 
     return (
         <main className="w-full h-full min-h-[720px] flex p-6 gap-6">
-            <div className="fixed right-1/2 bottom-10 translate-x-1/2 z-20 items-center">
+            <div className="fixed right-1/2 bottom-10 translate-x-1/2 z-20 flex items-center gap-2">
                 <Button variant={"destructive"} className="!py-5 !px-6 rounded-full" onClick={handleRoute}>
                     <PencilLine />
                     나만의 토픽 작성
                 </Button>
+                <AppDraftsDialog>
+                    <div className="relative">
+                        <Button variant={"outline"} className="w-10 h-10 rounded-full">
+                            <NotebookPen />
+                        </Button>
+                        <CircleSmall size={14} className="absolute top-0 right-0 text-red-500" fill="#EF4444" />
+                    </div>
+                </AppDraftsDialog>
             </div>
             {/* 카테고리 사이드바 */}
             <AppSidebar />

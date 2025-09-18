@@ -7,3 +7,5 @@ export { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectScro
 export { useFormField, Form, FormItem, FormLabel, FormControl, FormDescription, FormMessage, FormField } from "./form";
 export { Checkbox } from "./checkbox";
 export { Toaster } from "./sonner";
+export { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger } from "./dialog";
+export { Badge, badgeVariants } from "./badge";
