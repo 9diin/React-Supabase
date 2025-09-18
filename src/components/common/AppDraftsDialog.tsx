@@ -56,11 +56,11 @@ export function AppDraftsDialog({ children }: Props) {
                         <div className="min-h-60 h-60 flex flex-col items-center justify-start gap-3 overflow-y-scroll">
                             {drafts.map((draft: Topic, index: number) => {
                                 return (
-                                    <div className="w-full flex items-center justify-between py-2 px-4 rounded-md bg-card/50 cursor-pointer" onClick={() => navigate(`/topics/${draft.id}/create`)}>
+                                    <div className="w-full flex items-center justify-between py-2 px-4 gap-3 rounded-md bg-card/50 cursor-pointer" onClick={() => navigate(`/topics/${draft.id}/create`)}>
                                         <div className="flex items-start gap-2">
                                             <Badge className="w-5 h-5 mt-[3px] rounded-sm aspect-square text-foreground bg-[#E26F24] hover:bg-[#E26F24]">{index + 1}</Badge>
                                             <div className="flex flex-col">
-                                                <p>{draft.title}</p>
+                                                <p className="line-clamp-1">{draft.title}</p>
                                                 <p className="text-xs text-muted-foreground">작성일: {dayjs(draft.created_at).format("YYYY. MM. DD")}</p>
                                             </div>
                                         </div>

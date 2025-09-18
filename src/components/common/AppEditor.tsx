@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useCreateBlockNote } from "@blocknote/react";
 // Or, you can use ariakit, shadcn, etc.
 import { BlockNoteView } from "@blocknote/mantine";
@@ -8,7 +9,6 @@ import "@blocknote/mantine/style.css";
 import "@blocknote/core/fonts/inter.css";
 import type { Block } from "@blocknote/core";
 import { nanoid } from "nanoid";
-import { useEffect } from "react";
 
 interface Props {
     props?: Block[];
@@ -41,7 +41,6 @@ export function AppEditor({ props, setContent }: Props) {
                           children: [],
                       },
                   ], // props가 존재할 경우 초기 콘텐츠로 설정
-
         dictionary: {
             ...locale,
             placeholders: {
@@ -56,7 +55,7 @@ export function AppEditor({ props, setContent }: Props) {
             const current = JSON.stringify(editor.document);
             const next = JSON.stringify(props);
 
-            // 같으면 교체 안 함 (무한 루프 방지)
+            // current 값과 next 값이 같으면 교체를 안함 => 무한 루프를 방지하기 위함
             if (current !== next) {
                 editor.replaceBlocks(editor.document, props);
             }
