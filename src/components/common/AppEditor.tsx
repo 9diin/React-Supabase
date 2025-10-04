@@ -12,10 +12,11 @@ import { nanoid } from "nanoid";
 
 interface Props {
     props?: Block[];
-    setContent: (content: Block[]) => void;
+    setContent?: (content: Block[]) => void;
+    readonly?: boolean;
 }
 
-export function AppEditor({ props, setContent }: Props) {
+export function AppEditor({ props, setContent, readonly }: Props) {
     const locale = ko;
     // Create a new editor instance
     const editor = useCreateBlockNote({
@@ -63,5 +64,15 @@ export function AppEditor({ props, setContent }: Props) {
     }, [props, editor]);
 
     // Render the editor
-    return <BlockNoteView editor={editor} onChange={() => setContent(editor.document)} />;
+    return (
+        <BlockNoteView
+            editor={editor}
+            editable={!readonly}
+            onChange={() => {
+                if (!readonly) {
+                    setContent?.(editor.document);
+                }
+            }}
+        />
+    );
 }

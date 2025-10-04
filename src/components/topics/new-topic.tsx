@@ -4,6 +4,7 @@ import type { Topic } from "@/types/topic.type";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko"; // 한국어로 출력하려면
+import { useNavigate } from "react-router";
 
 dayjs.extend(relativeTime);
 dayjs.locale("ko"); // 한국어로 설정
@@ -44,8 +45,10 @@ function extractTextFromContent(content: string | any[], maxChars = 200) {
 }
 
 export function NewTopicCard({ props }: Props) {
+    const navigate = useNavigate();
+
     return (
-        <Card className="w-full h-fit p-4 gap-4">
+        <Card className="w-full h-fit p-4 gap-4" onClick={() => navigate(`/topics/${props.id}/detail`)}>
             <div className="flex items-start gap-4">
                 <div className="flex-1 flex flex-col items-start gap-4">
                     {/* 썸네일과 제목 */}
