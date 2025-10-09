@@ -8,6 +8,7 @@ import { z } from "zod";
 import { Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input } from "@/components/ui";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores";
+import { useEffect } from "react";
 
 const formSchema = z.object({
     email: z.email({
@@ -28,9 +29,40 @@ export default function SignIn() {
         },
     });
     const setUser = useAuthStore((state) => state.setUser);
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        console.log("로그인 버튼 클릭!");
 
+    useEffect(() => {
+        const checkSession = async () => {
+            const {
+                data: { session },
+            } = await supabase.auth.getSession();
+
+            if (session?.user) {
+                setUser({
+                    id: session.user.id,
+                    email: session.user.email as string,
+                    role: session.user.role as string,
+                });
+                navigate("/");
+            }
+        };
+        checkSession();
+    }, []);
+
+    // 소셜 로그인(구글 로그인)
+    const handleGoogleSignIn = async () => {
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+                queryParams: { access_type: "offline", prompt: "consent" },
+                redirectTo: window.location.origin, // 로그인 후 돌아올 URL (https://your-sevice-domain.com)
+            },
+        });
+
+        if (error) toast.error(error.message);
+    };
+
+    // 일반 로그인
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
             const {
                 data: { user, session },
@@ -73,7 +105,7 @@ export default function SignIn() {
                 </div>
                 <div className="grid gap-3">
                     {/* 소셜 로그인 */}
-                    <Button type="button" variant={"secondary"}>
+                    <Button type="button" variant={"secondary"} onClick={handleGoogleSignIn}>
                         <img src="/assets/icons/social/google.svg" alt="@GOOGLE-LOGO" className="w-[18px] h-[18px] mr-1" />
                         구글 로그인
                     </Button>

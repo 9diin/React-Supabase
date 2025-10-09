@@ -50,7 +50,7 @@ function App() {
 
     // 나만의 토픽 생성 버튼 클릭 시
     const handleRoute = async () => {
-        if (!user.id || !user.email || !user.role) {
+        if (!user) {
             toast.warning("토픽 작성은 로그인 후 가능합니다.");
             return;
         }

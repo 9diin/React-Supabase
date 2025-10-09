@@ -88,7 +88,7 @@ export default function CreateTopic() {
                     content: JSON.stringify(content),
                     category,
                     thumbnail: thumbnailUrl,
-                    author: user.id,
+                    author: user?.id,
                 },
             ])
             .eq("id", id)
@@ -144,7 +144,7 @@ export default function CreateTopic() {
                     content: JSON.stringify(content),
                     category,
                     thumbnail: thumbnailUrl,
-                    author: user.id,
+                    author: user?.id,
                     status: TOPIC_STATUS.PUBLISH,
                 },
             ])
