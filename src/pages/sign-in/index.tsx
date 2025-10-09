@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { NavLink, useNavigate } from "react-router";
+import { useAuthStore } from "@/stores";
 import supabase from "@/lib/supabase";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,8 +9,6 @@ import { z } from "zod";
 
 import { Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input } from "@/components/ui";
 import { toast } from "sonner";
-import { useAuthStore } from "@/stores";
-import { useEffect } from "react";
 
 const formSchema = z.object({
     email: z.email({

@@ -1,10 +1,11 @@
-import { AppEditor } from "@/components/common";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, Button, Separator } from "@/components/ui";
-import supabase from "@/lib/supabase";
-import { useAuthStore } from "@/stores";
-import { ArrowLeft, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
+import { useAuthStore } from "@/stores";
+import supabase from "@/lib/supabase";
+
+import { AppEditor } from "@/components/common";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, Button, Separator } from "@/components/ui";
+import { ArrowLeft, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function TopicDetail() {
