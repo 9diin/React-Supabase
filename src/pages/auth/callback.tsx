@@ -9,31 +9,51 @@ export default function AuthCallback() {
 
     useEffect(() => {
         const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            if (!session?.user) return;
+            console.log("[onAuthStateChange] 세션:", session);
+
+            if (!session?.user) {
+                console.warn("세션에 사용자 정보가 없습니다.");
+                return;
+            }
 
             const user = session.user;
 
-            // UUID 체크
             if (!user.id) {
-                console.log("유저 ID 값이 비어있습니다.");
+                console.warn("유저 ID가 없습니다.");
                 return;
             }
 
             try {
-                const { data: existing } = await supabase.from("user").select("id").eq("id", user.id).single();
+                const { data: existing, error: selectError } = await supabase.from("users").select("id").eq("id", user.id).single();
+
+                console.log("기존 유저 확인:", existing, selectError);
 
                 if (!existing) {
-                    await supabase.from("user").insert([{ id: user.id, email: user.email, service_agreed: true, privacy_agreed: true, marketing_agreed: false }]);
-                }
-            } catch (error) {
-                console.error(error);
-            }
+                    const { error: insertError } = await supabase.from("users").insert([
+                        {
+                            id: user.id,
+                            email: user.email,
+                            service_agreed: true,
+                            privacy_agreed: true,
+                            marketing_agreed: false,
+                        },
+                    ]);
 
-            setUser({ id: user.id, email: user.email as string, role: user.role as string });
-            navigate("/");
+                    if (insertError) {
+                        console.error("삽입 중 에러:", insertError);
+                        return;
+                    }
+
+                    console.log("신규 유저 삽입 완료");
+                }
+
+                setUser({ id: user.id, email: user.email, role: user.role || "" });
+                navigate("/");
+            } catch (error) {
+                console.error("예외 발생:", error);
+            }
         });
 
-        // 언마운트 시 구독 해제
         return () => {
             listener.subscription.unsubscribe();
         };
