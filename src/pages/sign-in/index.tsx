@@ -53,12 +53,14 @@ export default function SignIn() {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
+                redirectTo: window.location.href,
                 queryParams: { access_type: "offline", prompt: "consent" },
-                redirectTo: `${window.location.origin}`, // 로그인 후 돌아올 URL (https://your-sevice-domain.com)
             },
         });
 
-        if (error) toast.error(error.message);
+        if (error) {
+            toast.error(error.message);
+        }
     };
 
     // 일반 로그인
