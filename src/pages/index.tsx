@@ -5,7 +5,7 @@ import supabase from "@/lib/supabase";
 
 import { AppDraftsDialog, AppSidebar } from "../components/common";
 import { NewTopicCard } from "@/components/topics";
-import { SkeletonHotTopic, SkeletonNewTopic } from "../components/skeleton";
+import { SkeletonHotTopic } from "../components/skeleton";
 import { Button } from "../components/ui";
 import { CircleSmall, NotebookPen, PencilLine } from "lucide-react";
 import { toast } from "sonner";
