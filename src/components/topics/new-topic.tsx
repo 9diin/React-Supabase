@@ -51,7 +51,6 @@ function extractTextFromContent(content: string | any[], maxChars = 200) {
 
 async function findUserById(id: string) {
     try {
-        console.log(id);
         const { data: user, error } = await supabase.from("user").select("*").eq("id", id);
 
         if (error) {
@@ -59,7 +58,8 @@ async function findUserById(id: string) {
             return;
         }
 
-        console.log(user);
+        console.log("id", id);
+        console.log("user", user);
 
         if (user && user.length > 0) {
             return user[0].email.split("@")[0] + "님";
