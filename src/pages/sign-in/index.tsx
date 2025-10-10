@@ -54,7 +54,7 @@ export default function SignIn() {
             provider: "google",
             options: {
                 queryParams: { access_type: "offline", prompt: "consent" },
-                redirectTo: window.location.origin, // 로그인 후 돌아올 URL (https://your-sevice-domain.com)
+                redirectTo: process.env.VITE_SUPABASE_BASE_URL, // 로그인 후 돌아올 URL (https://your-sevice-domain.com)
             },
         });
 
