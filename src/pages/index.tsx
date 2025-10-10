@@ -9,7 +9,7 @@ import { SkeletonHotTopic } from "../components/skeleton";
 import { Button } from "../components/ui";
 import { CircleSmall, NotebookPen, PencilLine } from "lucide-react";
 import { toast } from "sonner";
-import type { Topic } from "@/types/topic.type";
+import { TOPIC_STATUS, type Topic } from "@/types/topic.type";
 
 function App() {
     const navigate = useNavigate();
@@ -27,7 +27,7 @@ function App() {
     // 발행된 토픽 조회
     const fetchTopics = async () => {
         try {
-            const query = supabase.from("topic").select("*").eq("status", "publish");
+            const query = supabase.from("topic").select("*").eq("status", TOPIC_STATUS.PUBLISH);
 
             if (category && category.trim() !== "") {
                 query.eq("category", category);

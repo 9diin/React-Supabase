@@ -53,7 +53,7 @@ export default function SignIn() {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
-                redirectTo: window.location.href,
+                redirectTo: process.env.VITE_SUPABASE_BASE_URL,
                 queryParams: { access_type: "offline", prompt: "consent" },
             },
         });
