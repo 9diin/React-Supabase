@@ -47,7 +47,7 @@ export default function AuthCallback() {
                     console.log("신규 유저 삽입 완료");
                 }
 
-                setUser({ id: user.id, email: user.email, role: user.role || "" });
+                setUser({ id: user.id, email: user.email || "알 수 없는 사용자", role: user.role || "" });
                 navigate("/");
             } catch (error) {
                 console.error("예외 발생:", error);
