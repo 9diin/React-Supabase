@@ -12,13 +12,12 @@ import { toast } from "sonner";
 import type { Topic } from "@/types/topic.type";
 
 function App() {
-    const user = useAuthStore((state) => state.user);
     const navigate = useNavigate();
+    const user = useAuthStore((state) => state.user);
     const [searchParams, setSearchParams] = useSearchParams();
-    const category = searchParams.get("category") || "";
-
     const [topics, setTopics] = useState<Topic[]>([]);
 
+    const category = searchParams.get("category") || "";
     const handleCategoryChange = (value: string) => {
         if (value === category) return; // 선택된 항목 재선택시 무시
         if (value === "") setSearchParams({});
@@ -138,7 +137,7 @@ function App() {
                             {topics
                                 .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
                                 .map((topic: Topic) => {
-                                    return <NewTopicCard props={topic} />;
+                                    return <NewTopicCard key={topic.id} props={topic} />;
                                 })}
                         </div>
                     ) : (

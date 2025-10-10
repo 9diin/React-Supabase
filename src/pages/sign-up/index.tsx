@@ -79,7 +79,7 @@ export default function SignUp() {
             if (user && session) {
                 const { data, error } = await supabase
                     .from("user")
-                    .insert([{ id: user.id, service_agreed: serviceAgreed, privacy_agreed: privacyAgreed, marketing_agreed: marketingAgreed }])
+                    .insert([{ id: user.id, email: values.email, service_agreed: serviceAgreed, privacy_agreed: privacyAgreed, marketing_agreed: marketingAgreed }])
                     .select();
 
                 if (data) {

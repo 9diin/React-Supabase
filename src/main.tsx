@@ -10,6 +10,7 @@ import SignUp from "./pages/sign-up"; // 회원가입 페이지
 import SignIn from "./pages/sign-in"; // 로그인 페이지
 import CreateTopic from "./pages/topics/[topic_id]/create.tsx"; // 토픽 생성 페이지
 import TopicDetail from "./pages/topics/[topic_id]/detail.tsx"; // 토픽 생성 페이지
+import Portfolio from "./pages/portfolio/index.tsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
@@ -23,6 +24,7 @@ createRoot(document.getElementById("root")!).render(
                         <Route path="sign-in" element={<SignIn />} />
                         <Route path="topics/:id/create" element={<CreateTopic />} />
                         <Route path="topics/:id/detail" element={<TopicDetail />} />
+                        <Route path="portfolio" element={<Portfolio />} />
                     </Route>
                 </Routes>
             </BrowserRouter>
