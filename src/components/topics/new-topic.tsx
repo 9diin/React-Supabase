@@ -58,9 +58,6 @@ async function findUserById(id: string) {
             return;
         }
 
-        console.log("id", id);
-        console.log("user", user);
-
         if (user && user.length > 0) {
             return user[0].email.split("@")[0] + "님";
         } else {
@@ -78,8 +75,8 @@ export function NewTopicCard({ props }: Props) {
 
     useEffect(() => {
         async function fetchAuthEmail() {
-            const email = await findUserById(props.author);
-            setNickname(email || "알 수 없는 사용자");
+            const nickname = await findUserById(props.author);
+            setNickname(nickname || "알 수 없는 사용자");
         }
         fetchAuthEmail();
     }, []);
