@@ -9,51 +9,41 @@ export default function AuthCallback() {
 
     useEffect(() => {
         const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            console.log("[onAuthStateChange] 세션:", session);
-
             if (!session?.user) {
-                console.warn("세션에 사용자 정보가 없습니다.");
+                console.error("세션에 사용자 정보가 없습니다.");
                 return;
             }
 
             const user = session.user;
 
             if (!user.id) {
-                console.warn("유저 ID가 없습니다.");
+                console.error("유저 ID가 없습니다.");
                 return;
             }
 
             try {
                 const { data: existing, error: selectError } = await supabase.from("user").select("id").eq("id", user.id).single();
 
-                console.log("기존 유저 확인:", existing, selectError);
-
                 if (!existing) {
-                    const { error: insertError } = await supabase.from("user").insert([
-                        {
-                            id: user.id,
-                            email: user.email,
-                            service_agreed: true,
-                            privacy_agreed: true,
-                            marketing_agreed: false,
-                        },
-                    ]);
+                    const { error: insertError } = await supabase.from("user").insert([{ id: user.id, email: user.email, service_agreed: true, privacy_agreed: true, marketing_agreed: false }]);
 
                     if (insertError) {
-                        console.error("삽입 중 에러:", insertError);
+                        console.error("USER 테이블 삽입 중 에러가 발생하였습니다.");
                         return;
                     }
-
-                    console.log("신규 유저 삽입 완료");
                 }
-
-                setUser({ id: user.id, email: user.email || "알 수 없는 사용자", role: user.role || "" });
+                setUser({
+                    id: user.id,
+                    email: user.email || "알 수 없는 사용자",
+                    role: user.role || "",
+                });
                 navigate("/");
             } catch (error) {
-                console.error("예외 발생:", error);
+                console.error(error);
             }
         });
 
+        // 언마운트 시, 구독 해지
         return () => {
             listener.subscription.unsubscribe();
         };
