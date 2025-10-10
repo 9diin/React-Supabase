@@ -24,12 +24,12 @@ export default function AuthCallback() {
             }
 
             try {
-                const { data: existing, error: selectError } = await supabase.from("users").select("id").eq("id", user.id).single();
+                const { data: existing, error: selectError } = await supabase.from("user").select("id").eq("id", user.id).single();
 
                 console.log("기존 유저 확인:", existing, selectError);
 
                 if (!existing) {
-                    const { error: insertError } = await supabase.from("users").insert([
+                    const { error: insertError } = await supabase.from("user").insert([
                         {
                             id: user.id,
                             email: user.email,
