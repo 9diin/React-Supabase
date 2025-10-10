@@ -24,6 +24,11 @@ export default function AuthCallback() {
             try {
                 const { data: existing, error: selectError } = await supabase.from("user").select("id").eq("id", user.id).single();
 
+                if (selectError) {
+                    console.error("USER 테이블 조회 중 에러가 발생하였습니다.");
+                    return;
+                }
+
                 if (!existing) {
                     const { error: insertError } = await supabase.from("user").insert([{ id: user.id, email: user.email, service_agreed: true, privacy_agreed: true, marketing_agreed: false }]);
 
