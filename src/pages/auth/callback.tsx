@@ -33,16 +33,13 @@ export default function AuthCallback() {
                 // 2️⃣ Upsert: user 테이블에 사용자 정보 삽입/업데이트
                 const { data, error: upsertError } = await supabase
                     .from("user")
-                    .upsert(
-                        {
-                            id: user.id,
-                            email: user.email || "알 수 없는 사용자",
-                            service_agreed: true,
-                            privacy_agreed: true,
-                            marketing_agreed: false,
-                        },
-                        { onConflict: "id" } // id가 이미 존재하면 insert 무시
-                    )
+                    .insert({
+                        id: user.id,
+                        email: user.email || "알 수 없는 사용자",
+                        service_agreed: true,
+                        privacy_agreed: true,
+                        marketing_agreed: false,
+                    })
                     .select();
 
                 if (upsertError) {
@@ -60,7 +57,7 @@ export default function AuthCallback() {
                 });
 
                 // 4️⃣ navigate
-                navigate("/");
+                // navigate("/");
             } catch (err) {
                 console.error("AuthCallback 처리 중 에러:", err);
             }
