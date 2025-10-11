@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "@/stores";
 import supabase from "@/lib/supabase";
@@ -6,6 +6,7 @@ import supabase from "@/lib/supabase";
 export default function AuthCallback() {
     const navigate = useNavigate();
     const setUser = useAuthStore((state) => state.setUser);
+    const [alreadyNavigated, setAlreadyNavigated] = useState(false);
 
     useEffect(() => {
         async function handleAuth() {
@@ -15,6 +16,7 @@ export default function AuthCallback() {
                     data: { user },
                     error: userError,
                 } = await supabase.auth.getUser();
+
                 if (userError) {
                     console.error("사용자 정보 가져오기 실패:", userError);
                     return;
@@ -25,21 +27,19 @@ export default function AuthCallback() {
                     return;
                 }
 
-                if (!user.id) {
-                    console.error("유저 ID가 없습니다.");
-                    return;
-                }
-
                 // 2️⃣ Upsert: user 테이블에 사용자 정보 삽입/업데이트
                 const { data, error: upsertError } = await supabase
                     .from("user")
-                    .insert({
-                        id: user.id,
-                        email: user.email || "알 수 없는 사용자",
-                        service_agreed: true,
-                        privacy_agreed: true,
-                        marketing_agreed: false,
-                    })
+                    .upsert(
+                        {
+                            id: user.id,
+                            email: user.email || "알 수 없는 사용자",
+                            service_agreed: true,
+                            privacy_agreed: true,
+                            marketing_agreed: false,
+                        },
+                        { onConflict: "id" } // id가 이미 존재하면 update
+                    )
                     .select();
 
                 if (upsertError) {
@@ -56,8 +56,11 @@ export default function AuthCallback() {
                     role: user.role || "",
                 });
 
-                // 4️⃣ navigate
-                // navigate("/");
+                // 4️⃣ 안전하게 navigate 제어
+                if (!alreadyNavigated) {
+                    // navigate("/");
+                    setAlreadyNavigated(true);
+                }
             } catch (err) {
                 console.error("AuthCallback 처리 중 에러:", err);
             }
@@ -65,7 +68,7 @@ export default function AuthCallback() {
 
         handleAuth();
 
-        // 5️⃣ 선택적: 로그인 상태 변화 구독 (로그 확인용)
+        // 5️⃣ 로그인 상태 변화 구독 (로그 확인용)
         const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
             console.log("onAuthStateChange 콜백:", _event, session);
         });
@@ -73,7 +76,7 @@ export default function AuthCallback() {
         return () => {
             listener.subscription.unsubscribe();
         };
-    }, [navigate, setUser]);
+    }, [navigate, setUser, alreadyNavigated]);
 
     return <main className="w-full h-full min-h-[720px] flex items-center justify-center">로그인을 진행 중입니다.</main>;
 }
