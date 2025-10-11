@@ -60,7 +60,7 @@ export default function AuthCallback() {
                     role: user.role || "",
                 });
 
-                navigate("/"); // 로그인 완료 후 홈 이동
+                // navigate("/"); // 로그인 완료 후 홈 이동
             } catch (error) {
                 console.error("AuthCallback 처리 중 에러:", error);
             }
