@@ -27,7 +27,7 @@ export default function AuthCallback() {
                 console.log("유저 ID:", user.id);
 
                 // 이미 존재하는지 확인 (선택 사항)
-                const { data: existing, error: selectError } = await supabase.from("user").select("id").eq("id", user.id).maybeSingle();
+                const { error: selectError } = await supabase.from("user").select("id").eq("id", user.id).maybeSingle();
 
                 if (selectError) {
                     console.error("USER 테이블 조회 중 에러:", selectError.message);
