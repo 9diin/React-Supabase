@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router";
+import { useAuthStore } from "@/stores";
 import supabase from "@/lib/supabase";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,6 +35,8 @@ const formSchema = z
 
 export default function SignUp() {
     const navigate = useNavigate();
+    const setUser = useAuthStore((state) => state.setUser);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -49,6 +52,24 @@ export default function SignUp() {
     const handleCheckService = () => setServiceAgreed(!serviceAgreed);
     const handleCheckPrivacy = () => setPrivacyAgreed(!privacyAgreed);
     const handleCheckMarketing = () => setMarketingAgreed(!marketingAgreed);
+
+    useEffect(() => {
+        const checkSession = async () => {
+            const {
+                data: { session },
+            } = await supabase.auth.getSession();
+
+            if (session?.user) {
+                setUser({
+                    id: session.user.id,
+                    email: session.user.email as string,
+                    role: session.user.role as string,
+                });
+                navigate("/");
+            }
+        };
+        checkSession();
+    }, []);
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         console.log("회원가입 버튼 클릭!");
