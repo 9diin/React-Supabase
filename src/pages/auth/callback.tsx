@@ -30,7 +30,7 @@ export default function AuthCallback() {
                 }
 
                 if (!existing) {
-                    const { error: insertError } = await supabase.from("user").insert([
+                    const { error: insertError } = await supabase.from("user").upsert([
                         {
                             id: user.id,
                             email: user.email,
@@ -38,6 +38,7 @@ export default function AuthCallback() {
                             privacy_agreed: true,
                             marketing_agreed: false,
                         },
+                        { onConflict: "id" }, // 중복 시 insert 무시
                     ]);
 
                     if (insertError) {
