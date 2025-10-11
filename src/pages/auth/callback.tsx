@@ -10,28 +10,27 @@ export default function AuthCallback() {
     useEffect(() => {
         async function handleAuth() {
             try {
-                // 1️⃣ 현재 세션 확인
+                // 1️⃣ 현재 로그인한 사용자 정보 가져오기
                 const {
-                    data: { session },
-                    error: sessionError,
-                } = await supabase.auth.getSession();
-                if (sessionError) {
-                    console.error("세션 확인 중 에러:", sessionError);
+                    data: { user },
+                    error: userError,
+                } = await supabase.auth.getUser();
+                if (userError) {
+                    console.error("사용자 정보 가져오기 실패:", userError);
                     return;
                 }
 
-                if (!session?.user) {
-                    console.error("세션에 사용자 정보가 없습니다.");
+                if (!user) {
+                    console.error("로그인된 사용자가 없습니다.");
                     return;
                 }
 
-                const user = session.user;
                 if (!user.id) {
                     console.error("유저 ID가 없습니다.");
                     return;
                 }
 
-                // 2️⃣ Upsert
+                // 2️⃣ Upsert: user 테이블에 사용자 정보 삽입/업데이트
                 const { data, error: upsertError } = await supabase
                     .from("user")
                     .upsert(
@@ -42,7 +41,7 @@ export default function AuthCallback() {
                             privacy_agreed: true,
                             marketing_agreed: false,
                         },
-                        { onConflict: "id" }
+                        { onConflict: "id" } // id가 이미 존재하면 insert 무시
                     )
                     .select();
 
@@ -60,7 +59,7 @@ export default function AuthCallback() {
                     role: user.role || "",
                 });
 
-                // 4️⃣ Navigate
+                // 4️⃣ navigate
                 navigate("/");
             } catch (err) {
                 console.error("AuthCallback 처리 중 에러:", err);
@@ -69,7 +68,7 @@ export default function AuthCallback() {
 
         handleAuth();
 
-        // 5️⃣ 선택적: 상태 변화 구독
+        // 5️⃣ 선택적: 로그인 상태 변화 구독 (로그 확인용)
         const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
             console.log("onAuthStateChange 콜백:", _event, session);
         });
