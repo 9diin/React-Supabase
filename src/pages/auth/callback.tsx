@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-// import { useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useAuthStore } from "@/stores";
 import supabase from "@/lib/supabase";
 
 export default function AuthCallback() {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const setUser = useAuthStore((state) => state.setUser);
 
     useEffect(() => {
@@ -17,24 +17,13 @@ export default function AuthCallback() {
             const user = session.user;
 
             if (!user.id) {
-                console.error("유효한 user.id가 없습니다. insert 중단");
+                console.error("유저 ID가 없습니다.");
                 return;
             }
 
             try {
-                // 로그로 세션/ID 확인
-                console.log("세션 정보:", session);
-                console.log("유저 ID:", user.id);
-
-                // 이미 존재하는지 확인 (선택 사항)
-                const { error: selectError } = await supabase.from("user").select("id").eq("id", user.id).maybeSingle();
-
-                if (selectError) {
-                    console.error("USER 테이블 조회 중 에러:", selectError.message);
-                }
-
-                // insert 또는 upsert (중복 PK 방지)
-                const { error: upsertError } = await supabase
+                // 🔹 upsert 사용: 이미 존재하면 insert 무시
+                const { data, error } = await supabase
                     .from("user")
                     .upsert(
                         {
@@ -44,14 +33,16 @@ export default function AuthCallback() {
                             privacy_agreed: true,
                             marketing_agreed: false,
                         },
-                        { onConflict: "id" } // 중복 시 insert 무시
+                        { onConflict: "id" } // id가 이미 있으면 insert 무시
                     )
-                    .select(); // insert 후 새 row 반환
+                    .select(); // 새 row 반환
 
-                if (upsertError) {
-                    console.error("USER 테이블 삽입/업서트 중 에러:", upsertError.message);
+                if (error) {
+                    console.error("USER 테이블 삽입/업서트 중 에러:", error.message);
                     return;
                 }
+
+                console.log("업서트 결과:", data);
 
                 // Zustand 상태 업데이트
                 setUser({
@@ -60,9 +51,10 @@ export default function AuthCallback() {
                     role: user.role || "",
                 });
 
-                // navigate("/"); // 로그인 완료 후 홈 이동
-            } catch (error) {
-                console.error("AuthCallback 처리 중 에러:", error);
+                // navigate도 정상적으로 동작
+                navigate("/");
+            } catch (err) {
+                console.error("AuthCallback 처리 중 에러:", err);
             }
         });
 
