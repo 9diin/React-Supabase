@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router";
-import { useAuthStore } from "@/stores";
 import supabase from "@/lib/supabase";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +9,7 @@ import { z } from "zod";
 import { Button, Checkbox, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input, Label, Separator } from "@/components/ui";
 import { ArrowLeft, Asterisk, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
+import { useAuthStore } from "@/stores";
 
 const formSchema = z
     .object({
@@ -36,7 +36,6 @@ const formSchema = z
 export default function SignUp() {
     const navigate = useNavigate();
     const setUser = useAuthStore((state) => state.setUser);
-
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
