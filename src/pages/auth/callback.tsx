@@ -8,22 +8,31 @@ export default function AuthCallback() {
     const setUser = useAuthStore((state) => state.setUser);
 
     useEffect(() => {
-        const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            if (!session?.user) {
-                console.error("세션에 사용자 정보가 없습니다.");
-                return;
-            }
-
-            const user = session.user;
-
-            if (!user.id) {
-                console.error("유저 ID가 없습니다.");
-                return;
-            }
-
+        async function handleAuth() {
             try {
-                // 🔹 upsert 사용: 이미 존재하면 insert 무시
-                const { data, error } = await supabase
+                // 1️⃣ 현재 세션 확인
+                const {
+                    data: { session },
+                    error: sessionError,
+                } = await supabase.auth.getSession();
+                if (sessionError) {
+                    console.error("세션 확인 중 에러:", sessionError);
+                    return;
+                }
+
+                if (!session?.user) {
+                    console.error("세션에 사용자 정보가 없습니다.");
+                    return;
+                }
+
+                const user = session.user;
+                if (!user.id) {
+                    console.error("유저 ID가 없습니다.");
+                    return;
+                }
+
+                // 2️⃣ Upsert
+                const { data, error: upsertError } = await supabase
                     .from("user")
                     .upsert(
                         {
@@ -33,36 +42,42 @@ export default function AuthCallback() {
                             privacy_agreed: true,
                             marketing_agreed: false,
                         },
-                        { onConflict: "id" } // id가 이미 있으면 insert 무시
+                        { onConflict: "id" }
                     )
-                    .select(); // 새 row 반환
+                    .select();
 
-                if (error) {
-                    console.error("USER 테이블 삽입/업서트 중 에러:", error.message);
+                if (upsertError) {
+                    console.error("USER 테이블 업서트 중 에러:", upsertError);
                     return;
                 }
 
                 console.log("업서트 결과:", data);
 
-                // Zustand 상태 업데이트
+                // 3️⃣ Zustand 상태 업데이트
                 setUser({
                     id: user.id,
                     email: user.email || "알 수 없는 사용자",
                     role: user.role || "",
                 });
 
-                // navigate도 정상적으로 동작
+                // 4️⃣ Navigate
                 navigate("/");
             } catch (err) {
                 console.error("AuthCallback 처리 중 에러:", err);
             }
+        }
+
+        handleAuth();
+
+        // 5️⃣ 선택적: 상태 변화 구독
+        const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+            console.log("onAuthStateChange 콜백:", _event, session);
         });
 
-        // 언마운트 시 구독 해지
         return () => {
             listener.subscription.unsubscribe();
         };
-    }, []);
+    }, [navigate, setUser]);
 
     return <main className="w-full h-full min-h-[720px] flex items-center justify-center">로그인을 진행 중입니다.</main>;
 }
