@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
+// import { useNavigate } from "react-router";
 import { useAuthStore } from "@/stores";
 import supabase from "@/lib/supabase";
 
 export default function AuthCallback() {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const setUser = useAuthStore((state) => state.setUser);
 
     useEffect(() => {
